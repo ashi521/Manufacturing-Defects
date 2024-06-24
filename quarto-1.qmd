@@ -1,0 +1,56 @@
+---
+title: "Manufacturing Defects"
+author: "Ashitha Kukatla"
+format: html
+execute: 
+  echo: false
+  message: false
+  warning: false
+---
+
+Which production rate causes the most manufacturing defects?
+
+The dataset contains various manufacturing metrics, including defect rate, which measures the percentage of defective products. The bar graph reveals variations in defect rates across different observations, indicating fluctuations in manufacturing quality.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+
+data <- read.csv("./manufacturing_defect_dataset.csv")
+
+data <- data %>%
+  mutate(ProductionVolumeBin = cut(ProductionVolume, breaks = 5, labels = c("Very Low", "Low", "Medium", "High", "Very High")))
+
+table(data$ProductionVolumeBin)
+
+summary_data <- data %>%
+  group_by(ProductionVolumeBin) %>%
+  summarize(AverageDefectRate = mean(DefectRate, na.rm = TRUE))
+
+print(summary_data)
+
+ggplot(summary_data, aes(x = ProductionVolumeBin, y = AverageDefectRate, fill = ProductionVolumeBin)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_brewer(palette = "Set3") +
+  labs(
+    title = "Average Defect Rate by Production Volume",
+    x = "Production Volume Category",
+    y = "Average Defect Rate",
+    fill = "Production Volume"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 20),
+    axis.title.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14),
+    axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+```
+
+The graph shows that very low, low, and very high production rates have the higher defect rates.
+
+```{r}
+#The dataset manufacturing_defect_dataset.csv includes several manufacturing performance metrics, such as production volume, cost, supplier quality, and defect rate. The key variable, DefectRate, measures the percentage of defective products in the production process. Upon examining the data, a bar graph reveals variations in defect rates across different observations, indicating fluctuations in manufacturing quality. This visualization highlights the need for consistent quality control measures to minimize defects and improve overall production efficiency.
+```
